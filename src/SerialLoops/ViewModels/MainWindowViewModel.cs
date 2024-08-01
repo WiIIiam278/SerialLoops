@@ -1,6 +1,8 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using Avalonia.Styling;
 using MiniToolbar.Avalonia;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
@@ -24,6 +26,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Svg;
 
 namespace SerialLoops.ViewModels
 {
@@ -70,7 +73,7 @@ namespace SerialLoops.ViewModels
         public ICommand MigrateProjectCommand { get; private set; }
         public ICommand ExportPatchCommand { get; private set; }
         public ICommand CloseProjectCommand { get; private set; }
-        
+
         public ICommand ApplyHacksCommand { get; private set; }
         public ICommand RenameItemCommand { get; private set; }
         public ICommand EditUiTextCommand { get; private set; }
@@ -97,6 +100,11 @@ namespace SerialLoops.ViewModels
             CurrentConfig = Config.LoadConfig((s) => s, Log);
             Strings.Culture = new(CurrentConfig.CurrentCultureName);
             Log.Initialize(CurrentConfig);
+
+            var fontStyle = new Style(x => x.OfType<Window>());
+            var font = FontFamily.Parse(string.IsNullOrEmpty(CurrentConfig.DisplayFont) ? Strings.Default_Font : CurrentConfig.DisplayFont);
+            fontStyle.Add(new Setter(Avalonia.Controls.Primitives.TemplatedControl.FontFamilyProperty, font));
+            Application.Current.Styles.Add(fontStyle);
 
             ProjectsCache = ProjectsCache.LoadCache(CurrentConfig, Log);
             UpdateRecentProjects();
@@ -525,25 +533,25 @@ namespace SerialLoops.ViewModels
             {
                 Text = Strings.Save,
                 Command = SaveProjectCommand,
-                Icon = ControlGenerator.GetIcon("Save", Log),
+                Icon = ControlGenerator.GetVectorIcon("Save", Log),
             });
             ToolBar.Items.Add(new ToolbarButton()
             {
                 Text = Strings.Build,
                 Command = BuildIterativeCommand,
-                Icon = ControlGenerator.GetIcon("Build", Log),
+                Icon = ControlGenerator.GetVectorIcon("Build", Log),
             });
             ToolBar.Items.Add(new ToolbarButton()
             {
                 Text = Strings.Build_and_Run,
                 Command = BuildAndRunCommand,
-                Icon = ControlGenerator.GetIcon("Build_Run", Log),
+                Icon = ControlGenerator.GetVectorIcon("Build_Run", Log),
             });
             ToolBar.Items.Add(new ToolbarButton()
             {
                 Text = Strings.Search,
                 Command = SearchProjectCommand,
-                Icon = ControlGenerator.GetIcon("Search", Log),
+                Icon = ControlGenerator.GetVectorIcon("Search", Log),
             });
         }
     }
